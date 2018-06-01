@@ -241,6 +241,23 @@
   (.getValue x))
 
 ;;
+;; Keyword
+;; 
+
+(defn- keyword->str [k]
+  (let [keyword-ns (namespace k)
+        keyword-name (name k)
+        keywordv [keyword-ns keyword-name]]
+    (->> keywordv
+         (filter some?) 
+         (clojure.string/join "/"))))
+
+(extend-protocol jdbc/ISQLValue
+  clojure.lang.Keyword
+  (sql-value [v]
+    (keyword->str v)))
+
+;;
 ;; Date 
 ;;
 
