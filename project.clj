@@ -1,8 +1,11 @@
-(defproject clj-postgresql "0.7.0"
+(defproject clj-postgresql "0.7.1-SNAPSHOT"
   :description "PostgreSQL helpers for Clojure projects"
   :url "https://github.com/remodoy/clj-postgresql"
   :license {:name "Two clause BSD license"
             :url "http://github.com/remodoy/clj-postgresql/README.md"}
+  :repositories [["releases" {:url "https://nexus.futurumlab.io"
+                              :username [:gpg :env/nexus_username]
+                              :password [:gpg :env/nexus_password]}]]
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.postgresql/postgresql "42.1.4"]
                  [net.postgis/postgis-jdbc "2.2.1" :exclusions [postgresql org.postgresql/postgresql]]

@@ -228,12 +228,12 @@
 (defmethod read-pgobject :json
   [^org.postgresql.util.PGobject x]
   (when-let [val (.getValue x)]
-    (json/parse-string val)))
+    (json/parse-string val true)))
 
 (defmethod read-pgobject :jsonb
   [^org.postgresql.util.PGobject x]
   (when-let [val (.getValue x)]
-    (json/parse-string val)))
+    (json/parse-string val true)))
 
 (defmethod read-pgobject :default
   [^org.postgresql.util.PGobject x]
