@@ -6,7 +6,8 @@
             [clojure.java.jdbc :as jdbc]
             [clojure.xml :as xml]
             [cheshire.core :as json]
-            [clj-time.coerce :as time-coerce])
+            ;; [clj-time.coerce :as time-coerce]
+            )
   (:import [org.postgresql.util PGobject]
            [org.postgis Geometry PGgeometry PGgeometryLW]
            [java.sql PreparedStatement ParameterMetaData]))
@@ -99,6 +100,7 @@
 (defmethod map->parameter :jsonb
   [m _]
   (to-pg-json m :jsonb))
+
 (extend-protocol jdbc/ISQLParameter
   clojure.lang.IPersistentMap
   (set-parameter [m ^PreparedStatement s ^long i]
@@ -242,14 +244,14 @@
 
 ;;
 ;; Keyword
-;; 
+;;
 
 (defn- keyword->str [k]
   (let [keyword-ns (namespace k)
         keyword-name (name k)
         keywordv [keyword-ns keyword-name]]
     (->> keywordv
-         (filter some?) 
+         (filter some?)
          (clojure.string/join "/"))))
 
 (extend-protocol jdbc/ISQLValue
@@ -258,13 +260,15 @@
     (keyword->str v)))
 
 ;;
-;; Date 
+;; Date
 ;;
 
-(extend-protocol jdbc/ISQLValue
-  java.util.Date
-  (sql-value [v]
-    (time-coerce/to-sql-time v)))
+;; DCJ: Duplicated by clj-time?
+;;
+;; (extend-protocol jdbc/ISQLValue
+;;   java.util.Date
+;;   (sql-value [v]
+;;     (time-coerce/to-sql-time v)))
 
 ;;
 ;; Extend clojure.java.jdbc's protocol for interpreting ResultSet column values.
@@ -290,8 +294,12 @@
   org.postgresql.util.PGobject
   (result-set-read-column [val _ _]
     (read-pgobject val))
-  
-  ;; Convert sql Timestamp to java.util.Date
-  java.sql.Timestamp
-  (result-set-read-column [col _ _]
-    (-> col time-coerce/from-sql-time .toDate)))
+  )
+
+;; DCJ: Duplicated by clj-time?
+;;
+
+  ;; ;; Convert sql Timestamp to java.util.Date
+  ;; java.sql.Timestamp
+  ;; (result-set-read-column [col _ _]
+  ;;   (-> col time-coerce/from-sql-time .toDate))
